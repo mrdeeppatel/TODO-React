@@ -1,9 +1,9 @@
 import { useState } from "react"
 //A Wrapper Div
-import AuthWrapper from "./AuthWrapper"
+import AuthWrapper from "./Wrapper"
 
 //SignIn API handler
-import { SignInData } from "../connection/connection"
+import { SignInData } from "../connection/model"
 
 function SignIn() {
 
@@ -12,7 +12,7 @@ function SignIn() {
     return <AuthWrapper PageType={"Login"}>
         <div style={{ backgroundColor: "cadetblue", borderStyle: "solid", borderWidth: 2, padding: 5 }}>
 
-            {/* <form > */}
+
             <label htmlFor=""><b>UserName</b></label><br />
 
 
@@ -44,7 +44,7 @@ function SignIn() {
                 SignInData({ User: Username, Pass: PassWord })
             }}>LogIn</button>
 
-            {/* </form> */}
+
         </div>
     </AuthWrapper>
 }

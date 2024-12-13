@@ -1,18 +1,20 @@
 import { useState } from "react"
 //A Wrapper Div
-import AuthWrapper from "./AuthWrapper"
+import AuthWrapper from "./Wrapper"
 
 //SignIn API handler
-import { SignUpData } from "../connection/connection"
+import { SignUpData } from "../connection/model"
 
 function SignUp() {
 
     const [Username, setUsername] = useState("")
     const [PassWord, setPassword] = useState("")
+    // const [confirmPassWord, setXomfirmPassword] = useState("")
+
     return <AuthWrapper PageType={"SignUp"}>
         <div style={{ backgroundColor: "cadetblue", borderStyle: "solid", borderWidth: 2, padding: 5 }}>
 
-            <form >
+
                 <label htmlFor=""><b>UserName</b></label><br />
 
 
@@ -43,11 +45,11 @@ function SignUp() {
                     //Passing the Detiles to the SignInData
                     // SignUpData({ User: Username, Pass: PassWord })
 
-                    
+
                     SignUpData({ User: Username, Pass: PassWord })
                 }}>SignUp</button>
 
-            </form>
+            
         </div>
     </AuthWrapper>
 }
