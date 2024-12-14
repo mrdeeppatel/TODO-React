@@ -48,6 +48,9 @@ function SignUp() {
 
                     SignUpData({ User: Username, Pass: PassWord })
                 }}>SignUp</button>
+                <button style={{float:"right", marginRight:"5%"}} onClick={()=>{
+                    window.location.replace('http://localhost:5173/signin')
+                }}>Login Page</button>
 
             
         </div>

@@ -3,6 +3,9 @@ const route = Router()
 const { userMiddleware } = require("../midleware/userMiddleware")
 const { userModel } = require("../models/userModel")
 const JWT = require("jsonwebtoken")
+
+//Store the below in .env file 
+//Below string is used to create anf varify the JsonWebToken
 const jwtPassword = "!@#$%^&*("
 
 route.post("/signup", userMiddleware, async (req, res) => {

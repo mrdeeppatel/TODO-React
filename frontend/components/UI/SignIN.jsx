@@ -19,7 +19,7 @@ function SignIn() {
             <input type="text" placeholder="Username Here" name="User" required
 
                 onChange={(e) => {
-                    console.log(e.target.value)
+                   
                     setUsername(e.target.value)
                 }}
             /><br /><br />
@@ -31,7 +31,7 @@ function SignIn() {
             <input type="password" placeholder="PassWord Here" name="Pass" required
 
                 onChange={(e) => {
-                    console.log(e.target.value)
+                   
                     setPassword(e.target.value)
                 }}
             /> <br /> <br />
@@ -43,7 +43,9 @@ function SignIn() {
                 //Passing the Detiles to the SignInData
                 SignInData({ User: Username, Pass: PassWord })
             }}>LogIn</button>
-
+            <button style={{ float: "right", marginRight: "5%" }} onClick={() => {
+                window.location.replace('http://localhost:5173/')
+            }}>Signup Page</button>
 
         </div>
     </AuthWrapper>

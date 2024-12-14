@@ -72,7 +72,7 @@ function TodoList() {
             <div style={{ float: "right", marginLeft: 5, }}>
                 <button onClick={() => {
                     { document.cookie = "JWT" + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;'; }
-                    renderTodos({setTodos:setTodos})
+                    renderTodos({ setTodos: setTodos })
                 }}>
                     LogOut
                 </button>
@@ -162,7 +162,9 @@ function TodoButton(props) {
         return <>
             <button onClick={() => {
                 UpdateTodo({ Task: props.task, Status: props.status, Deadline: props.deadline, TodoId: props.id })
-                renderTodos({ setTodos: props.setTodos })
+                setTimeout(() => {
+                    renderTodos({ setTodos: props.setTodos })
+                }, 1200)
             }}>Update</button>
 
 
@@ -182,9 +184,9 @@ function TodoTask(props) {
             <label>Task</label><br />
             <input type="text" placeholder="New Task" onChange={(e) => {
 
-                console.log(e.target.value)
+
                 props.setTask(e.target.value)
-               
+
             }} /><br /></>
 
     } else {
@@ -196,7 +198,7 @@ function TodoTask(props) {
 
             <input type="text" placeholder="Edit the task" value={props.taskToEdit} onChange={(e) => {
 
-                console.log(e.target.value)
+
                 props.setTask(e.target.value)
 
             }} /><br />
@@ -234,15 +236,16 @@ function TodoStatus(props) {
     }
 }
 function TodoDeadline(props) {
-
+    const now = new Date();
+    const formattedDate = now.toISOString().slice(0, 16);
     if (props.id == "") {
         return <>
 
             <label >Deadline</label><br />
             <label >mm/dd/yyyy</label><br />
-            <input type="datetime-local" value={props.deadlineToEdit} min="2024-12-31T22:59" max="9999-12-31T23:59" onChange={(e) => {
+            <input type="datetime-local" value={props.deadlineToEdit} min={formattedDate} max="9999-12-31T23:59" onChange={(e) => {
 
-                console.log(e.target.value)
+
                 props.setDeadline(e.target.value)
 
             }} /><br /><br />
@@ -251,13 +254,15 @@ function TodoDeadline(props) {
     } else {
 
 
+
+
         return <>
 
             <label >Deadline</label><br />
             <label >mm/dd/yyyy New</label><br />
-            <input type="datetime-local" value={props.deadlineToEdit} min="2024-12-31T22:59" max="9999-12-31T23:59" onChange={(e) => {
+            <input type="datetime-local" value={props.deadlineToEdit} min={formattedDate} max="9999-12-31T23:59" onChange={(e) => {
 
-                console.log(e.target.value)
+
                 props.setDeadline(e.target.value)
             }} /><br /><br />
 
