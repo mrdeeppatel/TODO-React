@@ -1,4 +1,4 @@
-import { signUpApi, signInApi, addTodoApi, getAllTodoApi, updateTodoApi } from "./data"
+import { signUpApi, signInApi, addTodoApi, getAllTodoApi, updateTodoApi, deleteTodoApi } from "./data"
 
 function SignInData({ User, Pass }) {
 
@@ -35,7 +35,11 @@ function AddTodoData({ Task, Status, Deadline }) {
 
     //Send the JWT in the headder 
 
-    //
+    if (Task == "" || Status == "" || Deadline == "") {
+
+        alert("Fild can't be empty")
+        return
+    }
     console.log(" Task = " + Task + " Status = " + Status + " Deadline = " + Deadline)
     addTodoApi({ Task: Task, Status: Status, Deadline: Deadline })
 
@@ -48,17 +52,31 @@ function GetTodoData() {
     // return
 }
 
-function UpdateTod({ TodoId, Task, Status, Deadline }) {
+function UpdateTodo({ TodoId, Task, Status, Deadline }) {
+
+    if (Task == "" || Status == "" || Deadline == "") {
+
+        alert("Fild can't be empty")
+        return
+    }
 
     updateTodoApi({ TodoId: TodoId, Task: Task, Status: Status, Deadline: Deadline })
 
 
 }
 
+
+function DeleteTodo({ TodoId }) {
+
+    deleteTodoApi({ TodoId: TodoId })
+}
+
+
 export {
     SignInData,
     SignUpData,
     AddTodoData,
     GetTodoData,
-    UpdateTod
+    UpdateTodo,
+    DeleteTodo
 }

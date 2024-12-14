@@ -22,11 +22,12 @@ function App() {
         <Routes>
           <Route path="/" element={<SignUp />} />
           <Route path="/Signin" element={<SignIn />} />
+          <Route path="/Todos" element={<TodoList />} />
         </Routes>
 
       </Router>
 
-      <TodoList></TodoList>
+      {/* <TodoList></TodoList> */}
       {/* <TodoInput></TodoInput> */}
     </>
 

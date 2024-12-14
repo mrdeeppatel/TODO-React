@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useEffect } from 'react'
-
+// import { useCookies } from "react-cookie"
 // import { redirect } from 'react-router'
 
 // const navigate = useNavigate()
@@ -15,16 +15,19 @@ function signInApi({ User, Pass }) {
         headers: user
     }).then((res) => {
 
-        console.log(res)
-        window.location
+        // console.log(res.data)
+
+        document.cookie = "JWT=" + res.data.cookie + "; path=/";
+
         alert("User LogdIn <-> data.js")
+        window.location.replace("http://localhost:5173/Todos")
         // navigate("/signin")
         // redirect("/signin")
         // window.location.replace('http://localhost:5173/signin');
     }).catch((err) => {
 
         console.log(err)
-        alert("Errro in user Login <-> data.js")
+        alert("Can't find the user")
     })
 }
 
@@ -42,7 +45,7 @@ function signUpApi({ User, Pass }) {
     }).then((res) => {
 
         console.log(res)
-        window.location
+        // window.location
         alert("User created <-> data.js")
         // navigate("/signin")
         // redirect("/signin")
@@ -50,19 +53,19 @@ function signUpApi({ User, Pass }) {
     }).catch((err) => {
 
         console.log(err)
-        alert("Errro in user creation <-> data.js")
+        
+        alert("User Already Exists")
     })
 }
 function addTodoApi({ Task, Status, Deadline }) {
 
     //At this point we have to send the JWT along the headers
 
-
-
-
     //
-    axios.post("http://localhost:3000/addTodo", {
+    let token = getCookie()
+    console.log(token + "    FROM addTodoApi")
 
+    axios.post("http://localhost:3000/addTodo", {
 
         task: Task,
         status: Status,
@@ -70,15 +73,10 @@ function addTodoApi({ Task, Status, Deadline }) {
     },
         {
             "Content-Type": "application/json",
-
             //At this time we are manualy sending the user and pass
             headers: {
-                username: "newuser",
-                password: "1234"
+                token: token
             }
-
-
-
         }).then((res) => {
 
             console.log(res)
@@ -96,13 +94,15 @@ function addTodoApi({ Task, Status, Deadline }) {
 function getAllTodoApi() {
     // let todos = []
     //JWT here
-    const user = {
-        username: "user1",
-        password: "user123"
-    }
+    let token = getCookie()
+    console.log(token + "    FROM addTodoApi")
 
     axios.post("http://localhost:3000/getAllTodo", {}, {
-        headers: user
+
+        headers: {
+            token: token
+        }
+
     }).then((res) => {
         // console.log(res.data)
         // todos = res.data
@@ -120,6 +120,10 @@ function getAllTodoApi() {
 }
 
 function updateTodoApi({ TodoId, Task, Status, Deadline }) {
+
+    let token = getCookie()
+    console.log(token + "    FROM addTodoApi")
+
     axios.post("http://localhost:3000/updateTodo",
         {
             todoid: TodoId,
@@ -129,22 +133,58 @@ function updateTodoApi({ TodoId, Task, Status, Deadline }) {
 
         }, {
         headers: {
-            username: "newuser",
-            password: "1234"
+            token: token
         }
     }).then((res) => {
         alert("Update success <-> data.js")
 
     }).catch((err) => {
-        alert("Update success <-> data.js")
+        alert("Error in Update <-> data.js")
 
     })
 
+}
+function deleteTodoApi({ TodoId }) {
+    let token = getCookie()
+    console.log(token + "    FROM addTodoApi")
+
+    axios.post("http://localhost:3000/deleteTodo", {
+        todoid: TodoId
+    }, {
+        headers: {
+            token: token
+        }
+    }).then((res) => {
+        alert("Delete success <-> data.js")
+
+    }).catch((err) => {
+        alert("Error In Delete<-> data.js")
+
+    })
+}
+
+function getCookie() {
+
+    let cookis = document.cookie
+    let token = undefined
+    cookis.split(";").map((obj) => {
+        if (obj.trim().startsWith("JWT=")) {
+
+            token = obj.split("=")[1]
+            return
+        }
+
+    })
+
+    return token
 }
 export {
     signUpApi,
     signInApi,
     addTodoApi,
     getAllTodoApi,
-    updateTodoApi
+    updateTodoApi,
+    deleteTodoApi,
+    getCookie
+
 }

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
 import "./Todo.css"
-import { AddTodoData, GetTodoData, UpdateTod } from "../connection/model"
+import { AddTodoData, GetTodoData, UpdateTodo, DeleteTodo } from "../connection/model"
 import axios from 'axios'
+import { getCookie } from "../connection/data"
 
 function TodoList() {
     //Id empty new todo if not Update todo
@@ -14,31 +15,16 @@ function TodoList() {
     const [task, setTask] = useState("")
     const [status, setStatus] = useState("Pending")
     const [deadline, setDeadline] = useState("")
+
+
     useEffect(() => {
-        const user = {
-            username: "newuser",
-            password: "1234"
-        }
-
-        axios.post("http://localhost:3000/getAllTodo", {}, {
-            headers: user
-        }).then((res) => {
-
-            setTodos(res.data)
-            console.log(res.data)
-        }).catch((err) => {
-            alert("Errro getting all todo <-> data.js")
-            console.log(err)
-
-            return []
-        })
-
         // console.log(GetTodoData())
+        renderTodos({ setTodos: setTodos })
     }, [])
     {/* <div style={{ float: 'left', marginLeft: "10%" }}> */ }
 
     return <>
-        <div style={{ display: "inline-flex", backgroundColor: "red", marginLeft: "10%", marginTop: "2%" }}>
+        <div style={{ display: "inline-flex", marginLeft: "10%", marginTop: "2%" }}>
             <table style={{ fontFamily: "sans-serif" }}>
                 <tbody>
                     <tr>
@@ -47,74 +33,112 @@ function TodoList() {
                         <th>Deadline</th>
                         <th>Action</th>
                     </tr>
-                    {todos.map((obj) => {
-                        const date = new Date(obj.deadline)
-                        // Returing the row 
-                        //Now on every iterate the new raw gets added
-                        return <tr key={obj._id}>
-                            <td>{obj.task}</td>
-                            <td>{obj.status}</td>
-                            {/* <td>{date.toLocaleDateString()},&ensp; {date.toLocaleTimeString()}</td> */}
-                            <td>{obj.deadline}</td>
-                            <td>
-                                <button className="buttonEdit" onClick={() => {
+                    {
+                        todos.map((obj) => {
+                            const date = new Date(obj.deadline)
+                            // Returing the row 
+                            //Now on every iterate the new raw gets added
+                            return <tr key={obj._id}>
+                                <td>{obj.task}</td>
+                                <td>{obj.status}</td>
+                                {/* <td>{date.toLocaleDateString()},&ensp; {date.toLocaleTimeString()}</td> */}
+                                <td>{date.toLocaleDateString("hi-IN") + "   " + date.toLocaleTimeString()}</td>
+                                <td>
+                                    <button className="buttonEdit" onClick={() => {
 
-                                    // _id: obj._id,
-                                    setTask(obj.task)
-                                    setStatus(obj.status)
-                                    setDeadline(obj.deadline)
+                                        // _id: obj._id,
+                                        setTask(obj.task)
+                                        setStatus(obj.status)
+                                        setDeadline(obj.deadline)
 
-                                    setIdToUpdate({ _id: obj._id })
+                                        setIdToUpdate({ _id: obj._id })
 
 
-                                }}>Edit</button>
-                                <button className="buttonDelete">Delete</button>
-                            </td>
-                        </tr>
+                                    }}>Edit</button>
+                                    <button className="buttonDelete" onClick={() => {
+                                        DeleteTodo({ TodoId: obj._id })
+                                        {
+                                            setTimeout(() => {
+                                                renderTodos({ setTodos: setTodos })
+                                            }, 1200)
+                                        }
+                                    }}>Delete</button>
+                                </td>
+                            </tr>
 
-                    })}
+                        })}
                 </tbody>
             </table>
+            <div style={{ float: "right", marginLeft: 5, }}>
+                <button onClick={() => {
+                    { document.cookie = "JWT" + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;'; }
+                    renderTodos({setTodos:setTodos})
+                }}>
+                    LogOut
+                </button>
+            </div>
         </div >
-        <TodoInput idtoupdate={idtoupdate} setIdToUpdate={setIdToUpdate}
-            task={task} setTask={setTask} status={status} setStatus={setStatus} deadline={deadline}
-            setDeadline={setDeadline}
 
-        />
+        {/* <TodoInput idtoupdate={idtoupdate} setIdToUpdate={setIdToUpdate}
+            task={task} setTask={setTask} status={status} setStatus={setStatus} deadline={deadline}
+            setDeadline={setDeadline} setTodos={setTodos}/> */}
+        <div style={{ maxWidth: 300, float: 'right', marginRight: "25%" }}>
+
+
+            <h3>Add Task</h3>
+            <div style={{ backgroundColor: "Ivory", padding: 20, maxHeight: 270, maxWidth: 300 }}>
+
+
+                <TodoTask id={idtoupdate} task={task} setTask={setTask} taskToEdit={task} />
+                {/* {console.log(props.todoForChange)} */}
+                <TodoStatus id={idtoupdate} status={status} setStatus={setStatus} statusToEdit={status} />
+                <TodoDeadline id={idtoupdate} deadline={deadline} setDeadline={setDeadline} deadlineToEdit={deadline} />
+
+
+                <TodoButton id={idtoupdate} setIdToUpdate={setIdToUpdate}
+                    task={task} status={status} deadline={deadline}
+                    setDeadline={setDeadline}
+                    setTask={setTask}
+                    setStatus={setStatus}
+                    setTodos={setTodos}
+                />
+            </div>
+        </div>
 
     </>
 }
 
-function TodoInput({ idtoupdate, setIdToUpdate, task, setTask, status, setStatus, deadline, setDeadline }) {
+function renderTodos({ setTodos }) {
+    let token = getCookie()
+    console.log(token + "    FROM addTodoApi")
 
+    if (token == undefined) {
+        window.location.replace('http://localhost:5173/signin');
+        return
+    }
+    axios.post("http://localhost:3000/getAllTodo", {}, {
+        headers: {
+            token: token
+        }
+    }).then((res) => {
+        console.log(res)
 
-    return <div style={{ maxWidth: 300, float: 'right', marginRight: "25%" }}>
+        if (res.status == 211) {
+            alert("Token Not valid at TODO.js")
+            window.location.replace('http://localhost:5173/signin');
+            return
 
+        }
 
-        <h3>Add Task</h3>
-        <div style={{ backgroundColor: "Ivory", padding: 20, maxHeight: 270, maxWidth: 300 }}>
+        setTodos(res.data)
+    }).catch((err) => {
+        alert("Errro getting all todo <-> data.js")
+        console.log(err)
 
-
-            <TodoTask id={idtoupdate} task={task} setTask={setTask} taskToEdit={task} />
-            {/* {console.log(props.todoForChange)} */}
-            <TodoStatus id={idtoupdate} status={status} setStatus={setStatus} statusToEdit={status} />
-            <TodoDeadline id={idtoupdate} deadline={deadline} setDeadline={setDeadline} deadlineToEdit={deadline} />
-
-
-            <TodoButton id={idtoupdate} setIdToUpdate={setIdToUpdate}
-                task={task} status={status} deadline={deadline}
-                setDeadline={setDeadline}
-                setTask={setTask}
-                setStatus={setStatus}
-            />
-        </div>
-    </div>
+        return []
+    })
 }
 
-export {
-    TodoList
-    // TodoInput
-}
 
 function TodoButton(props) {
 
@@ -126,19 +150,26 @@ function TodoButton(props) {
                     Status: props.status,
                     Deadline: props.deadline
                 })
+                {
+                    setTimeout(() => {
+                        renderTodos({ setTodos: props.setTodos })
+                    }, 1200)
+                }
+
             }}>Save</button></>
     } else {
 
         return <>
             <button onClick={() => {
-                UpdateTod({ Task: props.task, Status: props.status, Deadline: props.deadline, TodoId: props.id })
+                UpdateTodo({ Task: props.task, Status: props.status, Deadline: props.deadline, TodoId: props.id })
+                renderTodos({ setTodos: props.setTodos })
             }}>Update</button>
 
 
             <button onClick={() => {
-                props.setIdToUpdate(""),
+                props.setStatus("Pending"),
+                    props.setIdToUpdate(""),
                     props.setDeadline(""),
-                    props.setStatus(""),
                     props.setTask("")
             }}>cancle</button>
         </>
@@ -153,10 +184,7 @@ function TodoTask(props) {
 
                 console.log(e.target.value)
                 props.setTask(e.target.value)
-                if (e.target.value == "") {
-
-                    alert("Can't be null")
-                }
+               
             }} /><br /></>
 
     } else {
@@ -170,10 +198,7 @@ function TodoTask(props) {
 
                 console.log(e.target.value)
                 props.setTask(e.target.value)
-                if (e.target.value == "") {
 
-                    alert("Can't be null")
-                }
             }} /><br />
         </>
     }
@@ -215,7 +240,7 @@ function TodoDeadline(props) {
 
             <label >Deadline</label><br />
             <label >mm/dd/yyyy</label><br />
-            <input type="datetime-local" defaultValue="2024-12-31T22:59" min="2024-12-31T22:59" max="9999-12-31T23:59" onChange={(e) => {
+            <input type="datetime-local" value={props.deadlineToEdit} min="2024-12-31T22:59" max="9999-12-31T23:59" onChange={(e) => {
 
                 console.log(e.target.value)
                 props.setDeadline(e.target.value)
@@ -238,4 +263,9 @@ function TodoDeadline(props) {
 
         </>
     }
+}
+
+export {
+    TodoList
+    // TodoInput
 }

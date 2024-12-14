@@ -2,8 +2,8 @@ const { Router } = require("express")
 const route = Router()
 const { userMiddleware } = require("../midleware/userMiddleware")
 const { userModel } = require("../models/userModel")
-
-
+const JWT = require("jsonwebtoken")
+const jwtPassword = "!@#$%^&*("
 
 route.post("/signup", userMiddleware, async (req, res) => {
 
@@ -48,39 +48,79 @@ route.post("/signin", userMiddleware, async (req, res) => {
         return
     }
 
+    const parsed = JWT.sign({
+        username: username
+    }, jwtPassword)
+    console.log(parsed)
+
     res.status(200).json({
-        MSG: "SignIN Successful"
+        MSG: "SignIN Successful",
+        cookie: parsed
     })
 
 })
 
+// route.post("/addTodo", async (req, res) => {
+
+//     //Change this with the JWT
+//     const username = req.headers.username;
+//     const password = req.headers.password;
+
+
+//     //ADD Zod authanticatin
+//     console.log(req.body)
+//     let response = await userModel.findOne({
+//         username: username,
+//         password: password
+//     })
+//     if (!response) {
+
+//         console.log("User Doesn't Exsist to extrect todo <-> route.js")
+//         res.status(411).json({ MSG: "User Doedn't Exsist" })
+//         return
+//     }
+
+//     // console.log()
+//     const task = req.body.task
+//     const status = req.body.status
+//     const deadline = req.body.deadline
+
+//     await userModel.updateOne({
+//         username: username
+//     }, {
+//         "$push": {
+//             todos: {
+//                 task: task,
+//                 status: status,
+//                 deadline: deadline
+//             }
+//         }
+//     })
+//     res.json("Todo added")
+// })
+
 route.post("/addTodo", async (req, res) => {
 
-    //Change this with the JWT
-    const username = req.headers.username;
-    const password = req.headers.password;
+    const token = req.headers.token
 
+    let parsed = ""
 
-    //ADD Zod authanticatin
-    console.log(req.body)
-    let response = await userModel.findOne({
-        username: username,
-        password: password
-    })
-    if (!response) {
+    try {
+        parsed = JWT.verify(token, jwtPassword)
+    } catch (err) {
 
-        console.log("User Doesn't Exsist to extrect todo <-> route.js")
-        res.status(411).json({ MSG: "User Doedn't Exsist" })
+        console.log("Error in varifying token at <-> route.post /addTodo")
+        res.status(211).send("Not a valid token ")
         return
     }
-
+    console.log(parsed)
     // console.log()
     const task = req.body.task
     const status = req.body.status
     const deadline = req.body.deadline
 
     await userModel.updateOne({
-        username: username
+        username: parsed.username
     }, {
         "$push": {
             todos: {
@@ -94,12 +134,21 @@ route.post("/addTodo", async (req, res) => {
 })
 
 route.post("/getAllTodo", async (req, res) => {
-    const username = req.headers.username;
-    const password = req.headers.password;
+    const token = req.headers.token
+
+    let parsed = ""
+
+    try {
+        parsed = JWT.verify(token, jwtPassword)
+    } catch (err) {
+
+        console.log("Error in varifying token at <-> route.post /getTodos")
+        res.status(211).send("Not a valid token ")
+        return
+    }
 
     let response = await userModel.findOne({
-        username: username,
-        password: password
+        username: parsed.username
     })
 
     console.log(response.todos)
@@ -108,17 +157,16 @@ route.post("/getAllTodo", async (req, res) => {
 })
 
 route.post("/updateTodo", async (req, res) => {    //Change this with the JWT
-    const username = req.headers.username;
-    const password = req.headers.password;
+    const token = req.headers.token
 
-    let response = await userModel.findOne({
-        username: username,
-        password: password
-    })
-    if (!response) {
+    let parsed = ""
 
-        console.log("User Doesn't Exsist to extrect todo <-> route.js")
-        res.status(411).json({ MSG: "User Doedn't Exsist" })
+    try {
+        parsed = JWT.verify(token, jwtPassword)
+    } catch (err) {
+
+        console.log("Error in varifying token at <-> route.post /updateTodo")
+        res.status(211).send("Not a valid token ")
         return
     }
 
@@ -131,7 +179,7 @@ route.post("/updateTodo", async (req, res) => {    //Change this with the JWT
     // console.log(req.headers)
 
     const isUpdated = await userModel.findOneAndUpdate({
-        username: username,
+        username: parsed.username,
         "todos._id": todoid
     }, {
         "$set": {
@@ -145,6 +193,42 @@ route.post("/updateTodo", async (req, res) => {    //Change this with the JWT
 
     console.log(isUpdated)
     res.send(isUpdated)
+
+})
+
+route.post("/deleteTodo", async (req, res) => {
+
+    const token = req.headers.token
+
+    let parsed = ""
+
+    try {
+        parsed = JWT.verify(token, jwtPassword)
+    } catch (err) {
+
+        console.log("Error in varifying token at <-> route.post /addTodo")
+        res.status(211).send("Not a valid token ")
+        return
+    }
+    const todoid = req.body.todoid
+
+    const isDeleted = await userModel.findOneAndUpdate({
+        username: parsed.username,
+        // "todos._id": todoid
+    }, {
+        "$pull": {
+            "todos": {
+                _id: todoid
+            }
+        }
+
+    }, {
+        // safe: true
+    })
+
+    console.log(isDeleted)
+    res.send(isDeleted)
+
 
 })
 
