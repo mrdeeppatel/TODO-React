@@ -15,18 +15,16 @@ function signInApi({ User, Pass }) {
         headers: user
     }).then((res) => {
 
-        // console.log(res.data)
+      
 
         document.cookie = "JWT=" + res.data.cookie + "; path=/";
 
         alert("User LogdIn <-> data.js")
         window.location.replace("http://localhost:5173/Todos")
-        // navigate("/signin")
-        // redirect("/signin")
-        // window.location.replace('http://localhost:5173/signin');
+        
     }).catch((err) => {
 
-        console.log(err)
+      
         alert("Can't find the user")
     })
 }
@@ -44,15 +42,14 @@ function signUpApi({ User, Pass }) {
         headers: user
     }).then((res) => {
 
-        console.log(res)
-        // window.location
+    
+    
         alert("User created <-> data.js")
-        // navigate("/signin")
-        // redirect("/signin")
+        
         window.location.replace('http://localhost:5173/signin');
     }).catch((err) => {
 
-        console.log(err)
+        
         
         alert("User Already Exists")
     })
@@ -63,7 +60,7 @@ function addTodoApi({ Task, Status, Deadline }) {
 
     //
     let token = getCookie()
-    console.log(token + "    FROM addTodoApi")
+   
 
     axios.post("http://localhost:3000/addTodo", {
 
@@ -79,11 +76,11 @@ function addTodoApi({ Task, Status, Deadline }) {
             }
         }).then((res) => {
 
-            console.log(res)
+           
             alert("Todo added <-> data.js")
 
         }).catch((err) => {
-            console.log(err)
+            
             alert("Errro In Todo Creation <-> data.js")
         })
 
@@ -95,7 +92,7 @@ function getAllTodoApi() {
     // let todos = []
     //JWT here
     let token = getCookie()
-    console.log(token + "    FROM addTodoApi")
+
 
     axios.post("http://localhost:3000/getAllTodo", {}, {
 
@@ -104,13 +101,11 @@ function getAllTodoApi() {
         }
 
     }).then((res) => {
-        // console.log(res.data)
-        // todos = res.data
-        // console.log(res.data)
+      
         return res.data
     }).catch((err) => {
         alert("Errro getting all todo <-> data.js")
-        console.log(err)
+     
 
         return []
     })
@@ -122,7 +117,7 @@ function getAllTodoApi() {
 function updateTodoApi({ TodoId, Task, Status, Deadline }) {
 
     let token = getCookie()
-    console.log(token + "    FROM addTodoApi")
+   
 
     axios.post("http://localhost:3000/updateTodo",
         {
@@ -146,7 +141,7 @@ function updateTodoApi({ TodoId, Task, Status, Deadline }) {
 }
 function deleteTodoApi({ TodoId }) {
     let token = getCookie()
-    console.log(token + "    FROM addTodoApi")
+ 
 
     axios.post("http://localhost:3000/deleteTodo", {
         todoid: TodoId

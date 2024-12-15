@@ -37,7 +37,7 @@ function SignIn() {
             /> <br /> <br />
             <button type="submit" onClick={() => {
 
-                console.log(Username + "  " + PassWord)
+               
                 alert("From Sign Component")
 
                 //Passing the Detiles to the SignInData

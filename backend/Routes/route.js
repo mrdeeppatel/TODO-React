@@ -63,45 +63,6 @@ route.post("/signin", userMiddleware, async (req, res) => {
 
 })
 
-// route.post("/addTodo", async (req, res) => {
-
-//     //Change this with the JWT
-//     const username = req.headers.username;
-//     const password = req.headers.password;
-
-
-//     //ADD Zod authanticatin
-//     console.log(req.body)
-//     let response = await userModel.findOne({
-//         username: username,
-//         password: password
-//     })
-//     if (!response) {
-
-//         console.log("User Doesn't Exsist to extrect todo <-> route.js")
-//         res.status(411).json({ MSG: "User Doedn't Exsist" })
-//         return
-//     }
-
-//     // console.log()
-//     const task = req.body.task
-//     const status = req.body.status
-//     const deadline = req.body.deadline
-
-//     await userModel.updateOne({
-//         username: username
-//     }, {
-//         "$push": {
-//             todos: {
-//                 task: task,
-//                 status: status,
-//                 deadline: deadline
-//             }
-//         }
-//     })
-//     res.json("Todo added")
-// })
-
 route.post("/addTodo", async (req, res) => {
 
     const token = req.headers.token

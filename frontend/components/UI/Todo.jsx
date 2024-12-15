@@ -193,7 +193,7 @@ function TodoTask(props) {
 
         return <>
             <label>Task</label><br />
-            {console.log(props.taskToEdit)}
+           
 
 
             <input type="text" placeholder="Edit the task" value={props.taskToEdit} onChange={(e) => {
