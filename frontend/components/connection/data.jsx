@@ -1,9 +1,6 @@
 import axios from 'axios'
 import { useEffect } from 'react'
-// import { useCookies } from "react-cookie"
-// import { redirect } from 'react-router'
 
-// const navigate = useNavigate()
 function signInApi({ User, Pass }) {
 
     const user = {

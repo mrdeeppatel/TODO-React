@@ -9,7 +9,7 @@ function SignUp() {
 
     const [Username, setUsername] = useState("")
     const [PassWord, setPassword] = useState("")
-    // const [confirmPassWord, setXomfirmPassword] = useState("")
+    
 
     return <AuthWrapper PageType={"SignUp"}>
         <div style={{ backgroundColor: "cadetblue", borderStyle: "solid", borderWidth: 2, padding: 5 }}>

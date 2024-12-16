@@ -18,7 +18,7 @@ function App() {
   return (
     <>
       <Router>
-        {/* <Navbar /> */}
+
         <Routes>
           <Route path="/" element={<SignUp />} />
           <Route path="/Signin" element={<SignIn />} />
@@ -27,8 +27,7 @@ function App() {
 
       </Router>
 
-      {/* <TodoList></TodoList> */}
-      {/* <TodoInput></TodoInput> */}
+
     </>
 
   )
